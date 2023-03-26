@@ -2,7 +2,7 @@ const {post} = require('axios')
 
 module.exports = async (user_discord_id_encrypted, is_user_minor) => {
     return new Promise(async (resolve, reject) => {
-        await post(`${process.env.SOLAR_API}/listens/open`, {
+        await post(`${process.env.SOLAR_API}/listens/create`, {
             user_discord_id_encrypted, is_user_minor,
             user_age_encrypted: '0',
             main_subject_encrypted: '',
