@@ -1,7 +1,7 @@
 const {io} = require('socket.io-client');
 
 module.exports.connect = async (Client) => {
-    const socket = await io(`ws://localhost:3001`);
+    const socket = await io(`ws://${process.env.SOLAR_WS}:3000`);
 
     Client.solar.ws = socket;
 
@@ -11,7 +11,7 @@ module.exports.connect = async (Client) => {
         Client.log.warning('WebSocket connected !');
     });
 
-    socket.emit('is_bot', {});
+    socket.emit('bot_connect', {});
 
     socket.on('message', (arg) => {
         console.log(arg)
