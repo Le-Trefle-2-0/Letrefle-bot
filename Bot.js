@@ -1,6 +1,6 @@
 const { Client, Collection } = require('discord.js');
 
-const client = new Client({ intents: 131071 });
+const client = new Client({ intents: 28786 });
 
 client.commands = new Collection();
 client.buttons = new Collection();
