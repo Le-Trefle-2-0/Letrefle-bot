@@ -15,7 +15,7 @@ module.exports = async (Client, interaction) => {
             ephemeral: true
         });
     }).catch(async () => {
-        let ticket = await CreateTicket(Client, interaction.user.id, true);
+        let ticket = await CreateTicket(Client, interaction.user.id, false);
 
         let Buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()

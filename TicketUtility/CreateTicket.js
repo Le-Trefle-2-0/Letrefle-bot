@@ -1,10 +1,12 @@
-const {post} = require('axios')
+const {post} = require('axios');
+const {encrypt} = require('../Solar/encryptionService');
 
-module.exports = async (user_discord_id_encrypted, is_user_minor) => {
+module.exports = async (Client, user_discord_id_encrypted, is_user_minor) => {
     return new Promise(async (resolve, reject) => {
         await post(`${process.env.SOLAR_API}/listens/create`, {
-            user_discord_id_encrypted, is_user_minor,
-            user_age_encrypted: '0',
+            user_discord_id_encrypted,
+            is_user_minor,
+            user_age_encrypted: (is_user_minor ? encrypt('mineur') : (is_user_minor == false ? encrypt('majeur') : encrypt('N/R'))),
             main_subject_encrypted: '',
             date_time_start: new Date(),
             listen_status_id: 1
