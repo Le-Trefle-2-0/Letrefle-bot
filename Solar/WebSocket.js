@@ -6,7 +6,7 @@ module.exports = {
     connect: async (Client) => {
         socket = await io(`ws://${process.env.SOLAR_WS}:${process.env.SOLAR_WS_PORT}`);
 
-        Client.solar.ws = socket;
+        Client.Solar.ws = socket;
 
         // socket.emit('send_message', );
 
@@ -18,7 +18,7 @@ module.exports = {
         Client.log.info('Bot connected to Solar !');
 
         socket.on('message', (arg) => {
-            console.log(arg)
+            // console.log(arg)
         });
 
         socket.on('messageForBot', async (message) => {
