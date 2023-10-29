@@ -5,7 +5,7 @@ const checkService = require('../TicketUtility/CheckService');
 
 module.exports = async (Client, interaction) => {
     await interaction.deferReply({ ephemeral: true });
-    await checkService().then(async () => {
+    await checkService(Client).then(async () => {
         let Buttons = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setCustomId('OpenTicketMinor')
@@ -23,7 +23,7 @@ module.exports = async (Client, interaction) => {
                 .setStyle(ButtonStyle.Secondary)
         )
         
-        await checkOpen(interaction.user.id).then(() => {
+        await checkOpen(Client, interaction.user.id).then(() => {
             return interaction.editReply({
                 embeds: [
                     new EmbedBuilder()

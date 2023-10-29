@@ -23,7 +23,7 @@ module.exports = {
 
         socket.on('messageForBot', async (message) => {
             Client.log.info(`[MESSAGE] ${message.userID}: ${message.content}`)
-            let user = await Client.users.fetch(message.userID);
+            let user = await Client.Discord.users.fetch(message.userID);
             if (user) user.send({
                 embeds: [ 
                     new EmbedBuilder()
