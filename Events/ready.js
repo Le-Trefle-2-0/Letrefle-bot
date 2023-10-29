@@ -9,7 +9,7 @@ module.exports = async (Client) => {
 
     let commands = [];
 
-    Client.commands.forEach(command => {
+    Client.Discord.commands.forEach(command => {
         let data = new SlashCommandBuilder()
             .setName(command.name)
             .setDescription(command.description || 'Aucune description');
@@ -79,11 +79,11 @@ module.exports = async (Client) => {
         commands.push(data.toJSON());
     });
 
-    const rest = new REST({ version: '9' }).setToken(Client.token);
+    const rest = new REST({ version: '9' }).setToken(Client.Discord.token);
 
     try {
         await rest.put(
-            Routes.applicationCommands(Client.user.id),
+            Routes.applicationCommands(Client.Discord.user.id),
             { body: commands }
         );
     } catch (e) {

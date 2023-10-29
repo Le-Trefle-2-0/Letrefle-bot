@@ -8,7 +8,7 @@ module.exports = (Client) => {
             const command = require(`../Commands/${file}`);
             command.name = file.split('.')[0].toLocaleLowerCase();
 
-            Client.commands.set(command.name, command);
+            Client.Discord.commands.set(command.name, command);
             delete require.cache[require.resolve(`../Commands/${file}`)];
         });
     });

@@ -1,6 +1,6 @@
 module.exports = async (Client, interaction) => {
     if (interaction.isButton()) {
-        let button = Client.buttons.get(interaction.customId);
+        let button = Client.Discord.buttons.get(interaction.customId);
 
         if (button) {
             try {
@@ -12,7 +12,7 @@ module.exports = async (Client, interaction) => {
     }
 
     if (interaction.isSelectMenu()) {
-        let menu = Client.menus.get(interaction.customId);
+        let menu = Client.Discord.menus.get(interaction.customId);
 
         if (menu) {
             try {

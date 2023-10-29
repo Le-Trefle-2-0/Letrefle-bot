@@ -8,7 +8,7 @@ module.exports = async (Client) => {
             const event = require(`../Events/${file}`);
             const eventName = file.split('.')[0];
 
-            Client.on(eventName, event.bind(null, Client));
+            Client.Discord.on(eventName, event.bind(null, Client));
             delete require.cache[require.resolve(`../Events/${file}`)];
         });
     });
