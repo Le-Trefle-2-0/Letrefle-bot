@@ -5,7 +5,7 @@ const {EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle} = require('di
 module.exports = async (Client, interaction) => {
     await interaction.deferReply();
 
-    await checkOpen(interaction.user.id).then(() => {
+    await checkOpen(Client, interaction.user.id).then(() => {
         return interaction.editReply({
             embeds: [
                 new EmbedBuilder()
