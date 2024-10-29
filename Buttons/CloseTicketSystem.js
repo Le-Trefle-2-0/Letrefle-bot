@@ -1,143 +1,125 @@
-const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
-const moment = require("moment");
+const {ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle} = require('discord.js');
+const moment = require('moment');
 
 module.exports = async (Client, interaction) => {
-  if (interaction) {
-    let topRow = new MessageActionRow().addComponents(
-      new MessageButton()
-        .setCustomId("SelectorLeft")
-        .setStyle("PRIMARY")
-        .setEmoji("◀️"),
+    if (interaction) {
+        let topRow = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('SelectorLeft')
+                    .setStyle(ButtonStyle.Primary)
+                    .setEmoji('◀️'),
 
-      new MessageButton()
-        .setCustomId("IncreaseData")
-        .setStyle("PRIMARY")
-        .setEmoji("🔼"),
+                new ButtonBuilder()
+                    .setCustomId('IncreaseData')
+                    .setStyle(ButtonStyle.Primary)
+                    .setEmoji('🔼'),
 
-      new MessageButton()
-        .setCustomId("SelectorRight")
-        .setStyle("PRIMARY")
-        .setEmoji("▶️"),
+                new ButtonBuilder()
+                    .setCustomId('SelectorRight')
+                    .setStyle(ButtonStyle.Primary)
+                    .setEmoji('▶️'),
 
-      new MessageButton()
-        .setCustomId("ConfirmDate")
-        .setEmoji("✅")
-        .setStyle("SUCCESS"),
+                new ButtonBuilder()
+                    .setCustomId('ConfirmDate')
+                    .setEmoji('✅')
+                    .setStyle(ButtonStyle.Success),
 
-      new MessageButton()
-        .setCustomId("NoPlanning")
-        .setLabel("Ne pas planifier")
-        .setStyle("SECONDARY")
-    );
+                new ButtonBuilder()
+                    .setCustomId('NoPlanning')
+                    .setLabel('Ne pas planifier')
+                    .setStyle(ButtonStyle.Secondary)
+            );
 
-    let bottomRow = new MessageActionRow().addComponents(
-      new MessageButton()
-        .setCustomId("Nothing1")
-        .setLabel(" ")
-        .setStyle("PRIMARY")
-        .setDisabled(true),
+        let bottomRow = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('Nothing1')
+                    .setLabel('-')
+                    .setStyle(ButtonStyle.Primary)
+                    .setDisabled(true),
 
-      new MessageButton()
-        .setCustomId("DecreaseData")
-        .setStyle("PRIMARY")
-        .setEmoji("🔽"),
+                new ButtonBuilder()
+                    .setCustomId('DecreaseData')
+                    .setStyle(ButtonStyle.Primary)
+                    .setEmoji('🔽'),
 
-      new MessageButton()
-        .setCustomId("Nothing2")
-        .setLabel(" ")
-        .setStyle("PRIMARY")
-        .setDisabled(true),
+                new ButtonBuilder()
+                    .setCustomId('Nothing2')
+                    .setLabel('-')
+                    .setStyle(ButtonStyle.Primary)
+                    .setDisabled(true),
 
-      new MessageButton()
-        .setEmoji("❌")
-        .setCustomId("Cancel")
-        .setStyle("DANGER")
-    );
+                new ButtonBuilder()
+                    .setEmoji('❌')
+                    .setCustomId('Cancel')
+                    .setStyle(ButtonStyle.Danger)
+            );
 
-    let fullDate = moment(new Date()).format("DD/MM/YYYY");
-    let numbers = fullDate.split("/");
-    let hour = "20:00";
-    let time = hour.split(":");
+        let fullDate = moment(new Date()).format('DD/MM/YYYY');
+        let numbers = fullDate.split('/')
+        let hour = '20:00'
+        let time = hour.split(':')
 
-    Client.dateSelector = {
-      baseDate: new Date(),
-      fullDateFormatted: fullDate,
-      data: {
-        day: {
-          value: numbers[0],
-          selected: true,
-        },
-        month: {
-          value: numbers[1],
-          selected: false,
-        },
-        year: {
-          value: numbers[2],
-          selected: false,
-        },
-        hour: {
-          value: time[0],
-          selected: false,
-        },
-        minute: {
-          value: time[1],
-          selected: false,
-        },
-      },
-      rows: {
-        topRow,
-        bottomRow,
-      },
-    };
+        Client.dateSelector = {
+            baseDate: new Date(),
+            fullDateFormatted: fullDate,
+            data: {
+                day: {
+                    value: numbers[0],
+                    selected: true
+                },
+                month: {
+                    value: numbers[1],
+                    selected: false
+                },
+                year: {
+                    value: numbers[2],
+                    selected: false
+                },
+                hour: {
+                    value: time[0],
+                    selected: false
+                },
+                minute: {
+                    value: time[1],
+                    selected: false
+                }
+            },
+            rows: {
+                topRow, bottomRow
+            }
+        }
 
-    Client.dateSelector.genText = () => {
-      let text = `${
-        Client.dateSelector.data.day.selected
-          ? `\`${Client.dateSelector.data.day.value}\`/`
-          : `${Client.dateSelector.data.day.value}/`
-      }`;
-      text += `${
-        Client.dateSelector.data.month.selected
-          ? `\`${Client.dateSelector.data.month.value}\`/`
-          : `${Client.dateSelector.data.month.value}/`
-      }`;
-      text += `${
-        Client.dateSelector.data.year.selected
-          ? `\`${Client.dateSelector.data.year.value}\``
-          : `${Client.dateSelector.data.year.value}`
-      }`;
+        Client.dateSelector.genText = () => {
+            let text = `${Client.dateSelector.data.day.selected ? `\`${Client.dateSelector.data.day.value}\`/` : `${Client.dateSelector.data.day.value}/`}`
+            text += `${Client.dateSelector.data.month.selected ? `\`${Client.dateSelector.data.month.value}\`/` : `${Client.dateSelector.data.month.value}/`}`
+            text += `${Client.dateSelector.data.year.selected ? `\`${Client.dateSelector.data.year.value}\`` : `${Client.dateSelector.data.year.value}`}`
 
-      text += " - ";
-      text += `${
-        Client.dateSelector.data.hour.selected
-          ? `\`${Client.dateSelector.data.hour.value}\``
-          : `${Client.dateSelector.data.hour.value}`
-      }:`;
-      text += `${
-        Client.dateSelector.data.minute.selected
-          ? `\`${Client.dateSelector.data.minute.value}\``
-          : `${Client.dateSelector.data.minute.value}`
-      }`;
+            text += ' - '
+            text += `${Client.dateSelector.data.hour.selected ? `\`${Client.dateSelector.data.hour.value}\`` : `${Client.dateSelector.data.hour.value}`}:`
+            text += `${Client.dateSelector.data.minute.selected ? `\`${Client.dateSelector.data.minute.value}\`` : `${Client.dateSelector.data.minute.value}`}`
 
-      return text;
-    };
+            return text;
+        }
 
-    await interaction.reply({
-      embeds: [
-        new MessageEmbed().setColor("9bd2d2").setDescription(`
+        await interaction.reply({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor('9bd2d2')
+                    .setDescription(`
                     🍀 | Quelle est la date de la prochaine permanence ?
                     
-                    ▶️ | ${Client.dateSelector.genText()}`),
-      ],
-      components: [topRow, bottomRow],
-    });
+                    ▶️ | ${Client.dateSelector.genText()}`)
+            ], components: [topRow, bottomRow]
+        });
 
-    let available = await Client.available.findAll();
+        let available = await Client.available.findAll();
 
-    for (let i in Object.keys(available)) {
-      await available[i].destroy();
+        for (let i in Object.keys(available)) {
+            await available[i].destroy();
+        }
+
+        Client.functions.updateAvailable(Client)
     }
-
-    Client.functions.updateAvailable(Client);
-  }
-};
+}
