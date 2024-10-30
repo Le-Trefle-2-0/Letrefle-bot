@@ -3,6 +3,8 @@ const {scheduleJob} = require('node-schedule');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {REST} = require('@discordjs/rest');
 const {Routes} = require('discord-api-types/v9')
+const {AttachmentBuilder} = require('discord.js');
+const fs = require('fs');
 
 module.exports = async (Client) => {
     await Client.Ticket.sync();
@@ -45,9 +47,69 @@ module.exports = async (Client) => {
     if (mainServer) {
         let logsChannel = await mainServer.channels.fetch(Client.settings.logsChannelID);
         if (logsChannel) {
-            logsChannel.send('<:letrefle:881678451608788993> | Démarrage complet du bot avec succès.');
+            fs.readdir(Client.settings.logsPath, async (err, files) => {
+                if (err) throw err;
+                let birthtime = 0;
+
+                await files.forEach(async file => {
+                    if (file.endsWith('.log')) {
+                        let creationDate = await fs.statSync(`${Client.settings.logsPath}/${file}`).birthtimeMs;
+                        if (creationDate > birthtime) {
+                            birthtime = creationDate;
+                            Client.settings.logsFile = `${Client.settings.logsPath}/${file}`;
+                            let logs = fs.readFileSync(Client.settings.logsFile, 'utf8');
+                            Client.logs = '';
+                        }
+                    }
+                });
+
+                // send previous crash logs
+                let logs = fs.readFileSync(Client.settings.logsFile, 'utf8');
+                let logsArray = logs.split('─────────────────────────────────\n' +
+                    '────────▄███▄───────▄███▄────────\n' +
+                    '───────███████─────███████───────\n' +
+                    '──────█████████───█████████──────\n' +
+                    '────▄███████████─███████████▄────\n' +
+                    '──▄█████████████─█████████████▄──\n' +
+                    '▄███████████████─███████████████▄\n' +
+                    '████████████████─████████████████\n' +
+                    '████████████████─████████████████ \n' +
+                    '▀███████████████████████████████▀     ##       ######## ######## ########  ######## ######## ##       ########  #######        ##### \n' +
+                    '──▀███████████████████████████▀──     ##       ##          ##    ##     ## ##       ##       ##       ##       ##     ##      ##   ## \n' +
+                    '────▀███████████████████████▀────     ##       ##          ##    ##     ## ##       ##       ##       ##              ##     ##     ## \n' +
+                    '──────────▀███████████▀──────────     ##       ######      ##    ########  ######   ######   ##       ######    #######      ##     ##\n' +
+                    '────▄████████████████████████▄───     ##       ##          ##    ##   ##   ##       ##       ##       ##       ##            ##     ## \n' +
+                    '─▄█████████████████████████████▄─     ##       ##          ##    ##    ##  ##       ##       ##       ##       ##        ###  ##   ##\n' +
+                    '█████████████████████████████████     ######## ########    ##    ##     ## ######## ##       ######## ######## ######### ###   ##### \n' +
+                    '█████████████████████████████████\n' +
+                    '███████████████─██─██████████████\n' +
+                    '███████████████─██─██████████████\n' +
+                    '─██████████████─██─████████████▀─\n' +
+                    '──▀████████████─██─██████████▀───\n' +
+                    '────▀█████████──██──████████▀────\n' +
+                    '──────███████───██───██████▀─────\n' +
+                    '───────▀███▀────███───▀███▀──────\n' +
+                    '─────────────────███─────────────\n' +
+                    '──────────────────███────────────\n' +
+                    '───────────────────███───────────');
+                let previousLogs = logsArray[logsArray.length - 2];
+                previousLogs = previousLogs.split(__dirname)[previousLogs.split(__dirname).length - 1];
+                logsChannel.send(`\`\`\`diff\n${previousLogs}\`\`\``);
+                logsChannel.send('<:letrefle:881678451608788993> | Démarrage complet du bot avec succès.');
+
+                setInterval(() => {
+                    let logs = fs.readFileSync(Client.settings.logsFile, 'utf8');
+                    let logsText = logs.split('───────────────────███───────────')[logs.split('───────────────────███───────────').length - 1];
+                    if (logsText !== Client.logs) {
+                        let newLogs = logsText.substring(Client.logs.length);
+                        Client.logs = logsText;
+                        logsChannel.send(`\`\`\`diff\n${newLogs}\`\`\``);
+                    }
+                }, 5000);
+            });
         }
     }
+
 
     Client.functions.updateAvailable(Client);
     Client.functions.updateChannelsMessage(Client);
