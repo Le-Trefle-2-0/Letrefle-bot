@@ -51,6 +51,7 @@ module.exports = async (Client) => {
 
     Client.functions.updateAvailable(Client);
     Client.functions.updateChannelsMessage(Client);
+    Client.functions.loadDM(Client);
 
     let mainGuild = Client.guilds.cache.get(Client.settings.mainGuildID);
     if (mainGuild) {

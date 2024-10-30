@@ -608,5 +608,15 @@ module.exports = {
                 })
             }
         }
+    },
+
+    loadDM: async (Client) => {
+        let tickets = await Client.Ticket.findAll();
+        tickets.forEach(async ticket => {
+            let user = await Client.users.fetch(ticket.ownerID);
+            if (user) {
+                await user.createDM();
+            }
+        });
     }
 }
