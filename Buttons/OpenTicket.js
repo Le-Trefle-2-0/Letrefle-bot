@@ -1,4 +1,4 @@
-const {ActionRowBuilder, ButtonBuilder, EmbedBuilder, SelectMenuBuilder, PermissionFlagsBits, ButtonStyle} = require('discord.js');
+const {ActionRowBuilder, ButtonBuilder, EmbedBuilder, StringSelectMenuBuilder, PermissionFlagsBits, ButtonStyle} = require('discord.js');
 
 module.exports = async (Client, interaction, Ticket) => {
 
@@ -151,11 +151,10 @@ module.exports = async (Client, interaction, Ticket) => {
                         .setDescription(':warning: | Tous les bénévoles sont actuellement occupés. Merci d\'utiliser la commande `/assigner` pour assigner un nouveau bénévole écoutant.')
                 ], content: `<@&${Client.settings.referentRoleID}>`
             });
-            // TODO: complete the occupation & wait message
         } else {
             let attributeRow = new ActionRowBuilder()
                 .addComponents(
-                    new SelectMenuBuilder()
+                    new StringSelectMenuBuilder()
                         .setCustomId('addAvailable')
                         .setPlaceholder('Ajouter un bénévole')
                         .addOptions(options)

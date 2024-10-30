@@ -5,7 +5,7 @@ module.exports = async (Client, interaction) => {
         if (button) button(Client, interaction);
     }
 
-    if (interaction.isSelectMenu()) {
+    if (interaction.isStringSelectMenu()) {
         let menu = Client.menus.get(interaction.customId);
 
         if (menu) menu(Client, interaction);
