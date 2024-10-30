@@ -34,7 +34,6 @@ module.exports = async (Client, interaction) => {
                 });
 
                 let user = await Client.users.fetch(ticket.ownerID);
-                console.log(interaction.message.channel.type);
                 if (user) {
                     try {
                         await user.send({
