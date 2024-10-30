@@ -25,7 +25,7 @@ module.exports = async (Client, message) => {
                 if (ticketChannel) {
                     let embed = new EmbedBuilder()
                         .setAuthor({ name: 'Utilisateur', iconURL: 'https://cdn.discordapp.com/attachments/757897064754708560/883734125985529866/default-profile-picture-clipart-3.jpg' })
-                        .setDescription(message.content || 'Piece jointe :')
+                        .setDescription(message.content || '** **')
                         .setTimestamp()
                         .setColor('9bd2d2');
 
@@ -33,9 +33,11 @@ module.exports = async (Client, message) => {
                         message.attachments.forEach(attachment => {
                             if (attachment.contentType.startsWith('image/')) {
                                 embed.setImage(attachment.url);
-                            } else return message.reply('Ce type de message n\'est pas supporté, merci d\'envoyer un message texte ou une image.')
+                            } else return message.reply('Ce type de message n\'est pas supporté, merci d\'envoyer un message texte.')
                         })
                     }
+
+                    if (message.attachments.size = 0 && !message.content) return message.reply('Ce type de message n\'est pas supporté, merci d\'envoyer un message texte.');
 
                     if (message.reference) {
                         let replyMsg = await message.channel.messages.fetch(message.reference.messageId);
