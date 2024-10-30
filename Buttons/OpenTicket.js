@@ -105,16 +105,15 @@ module.exports = async (Client, interaction, Ticket) => {
             attributed: null,
         });
 
-        // try {
-        //     interaction.reply({ embeds: [
-        //             new EmbedBuilder()
-        //                 .setColor('GREEN')
-        //                 .setDescription('✅ | Votre demande d\'écoute à bien été prise en compte, veuillez continuer par messages privés.')
-        //         ], ephemeral: true});
-        // } catch (e) {
-        //     Client.functions.error(e);
-        // }
-        // TODO: check if interaction can be replied
+        try {
+            interaction.reply({ embeds: [
+                    new EmbedBuilder()
+                        .setColor('GREEN')
+                        .setDescription('✅ | Votre demande d\'écoute à bien été prise en compte, veuillez continuer par messages privés.')
+                ], ephemeral: true});
+        } catch (e) {
+            Client.functions.error(e);
+        }
 
         let available = await Client.available.findAll({ where: { occupied: false }});
         let options = [];
