@@ -1,6 +1,7 @@
 const {EmbedBuilder, AttachmentBuilder, ActionRowBuilder, ButtonStyle, ButtonBuilder} = require('discord.js');
 const {readFile, writeFile, unlink} = require('fs');
 const moment = require('moment');
+const crypto = require('crypto');
 
 module.exports = async (Client, interaction) => {
     let ticket;
@@ -187,8 +188,16 @@ module.exports = async (Client, interaction) => {
 
         Client.functions.updateAvailable(Client);
 
+        let hash = crypto.createHash('sha256').update(ticket.ownerID).digest('hex');
+
         let historic = await Client.Historic.create({
             ticketID: ticket.ticketID,
+            ownerID: hash,
+            openTimestamp: new Date(ticket.createdAt).getTime(),
+            closeTimestamp: Date.now(),
+            duration: Date.now() - ticket.createdAt,
+            attributed: ticket.attributed,
+
         });
     }
 }
