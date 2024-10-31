@@ -585,7 +585,6 @@ module.exports = {
         console.log(`${Date.now()} - Critical error :`);
         console.log(error);
 
-        error = error.toString();
         if (error.length >= 1500) {
             let url = await post('https://www.toptal.com/developers/hastebin/documents', error);
 
