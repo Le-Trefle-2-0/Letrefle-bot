@@ -94,7 +94,7 @@ module.exports = async (Client) => {
                     '───────────────────███───────────');
                 let previousLogs = logsArray[logsArray.length - 2] || '';
                 previousLogs = previousLogs.split(__dirname)[previousLogs.split(__dirname).length - 1];
-                logsChannel.send(`\`\`\`diff\n${previousLogs}\`\`\``);
+                logsChannel.send(`\`\`\`diff\n${previousLogs.length <= 2000 ? previousLogs : 'ERREUR TROP LONGUE, MERCI DE LA CONSULTER SUR LE SERVEUR'}\`\`\``);
                 logsChannel.send('<:letrefle:881678451608788993> | Démarrage complet du bot avec succès.');
 
                 setInterval(() => {
@@ -103,7 +103,7 @@ module.exports = async (Client) => {
                     if (logsText !== Client.logs) {
                         let newLogs = logsText.substring(Client.logs.length);
                         Client.logs = logsText;
-                        logsChannel.send(`\`\`\`diff\n${newLogs}\`\`\``);
+                        logsChannel.send(`\`\`\`diff\n${newLogs.length <= 2000 ? newLogs : 'ERREUR TROP LONGUE, MERCI DE LA CONSULTER SUR LE SERVEUR'}\`\`\``);
                     }
                 }, 5000);
             });
