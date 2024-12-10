@@ -81,8 +81,6 @@ module.exports = async (Client, interaction) => {
             }
         }
 
-        await ticket.destroy();
-
         if (ticket.attributed) {
             let occupied = false;
             let tickets = await Client.Ticket.findAll();
@@ -114,5 +112,7 @@ module.exports = async (Client, interaction) => {
             attributed: ticket.attributed,
 
         });
+
+        await ticket.destroy();
     }
 }
