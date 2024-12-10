@@ -364,20 +364,19 @@ module.exports = async (Client) => {
                for (let option of command.options) {
                    switch (option.type) {
                        case 'string':
-                            if (option.choices) { 
-                                data.addStringOption(opt =>
-                                    opt.setName(option.name)
-                                        .setDescription(option.desc || 'Aucune description')
-                                        .setRequired(option.required)
-                                        .addChoices(option.choices)
-                                );
-                            } else {
-                                data.addStringOption(opt =>
-                                    opt.setName(option.name)
-                                        .setDescription(option.desc || 'Aucune description')
-                                        .setRequired(option.required)
-                                );
-                            }
+                            data.addStringOption(opt => 
+                                opt.setName(option.name)
+                                    .setDescription(option.desc || 'Aucune description')
+                                    .setRequired(option.required)
+                                    
+                                // if (option.choices) {
+                                //     console.log(option.choices)
+                                //     option.choices.forEach(choice => {
+                                //         console.log(choice)
+                                //         opt.addChoices(choice)
+                                //     })
+                                // }
+                            );
                            break;
 
                        case 'int':
