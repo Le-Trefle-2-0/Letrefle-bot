@@ -116,7 +116,6 @@ module.exports = async (Client, interaction, Ticket) => {
         } catch (e) {
             Client.functions.error(Client, e);
         }
-        // TODO: Removed for crash hotfixing
 
         let available = await Client.available.findAll({ where: { occupied: false }});
         let options = [];
