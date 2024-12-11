@@ -45,7 +45,7 @@ module.exports = {
             ], ephemeral: true
         });
 
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: true });
 
         let type = interaction.options.getString('type');
         let historic;
