@@ -134,6 +134,15 @@ module.exports = async (Client, interaction, Ticket) => {
 
         let ticketMenuMessage = null;
 
+        let CloseRow = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('CloseTicket')
+                    .setLabel('Fermer l\'écoute')
+                    .setEmoji('⚠')
+                    .setStyle(ButtonStyle.Danger)
+            );
+
         if (options.length < 1) {
             interaction.user.send({ embeds: [
                 new EmbedBuilder()
@@ -151,7 +160,7 @@ module.exports = async (Client, interaction, Ticket) => {
                     new EmbedBuilder()
                         .setColor('9bd2d2')
                         .setDescription(':warning: | Tous les bénévoles sont actuellement occupés. Merci d\'utiliser la commande `/assigner` pour assigner un nouveau bénévole écoutant.')
-                ], content: `<@&${Client.settings.referentRoleID}>`
+                ], content: `<@&${Client.settings.referentRoleID}>`, row: [CloseRow]
             });
         } else {
             let attributeRow = new ActionRowBuilder()
@@ -168,7 +177,7 @@ module.exports = async (Client, interaction, Ticket) => {
                     new EmbedBuilder()
                         .setColor('9bd2d2')
                         .setDescription('🍀 | Nouvelle demande d\'écoute. Veuillez attribuer un bénévole écoutant.')
-                ], components: [attributeRow]
+                ], components: [attributeRow, CloseRow]
             });
         }
 
