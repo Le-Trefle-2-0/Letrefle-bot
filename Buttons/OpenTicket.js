@@ -2,6 +2,8 @@ const {ActionRowBuilder, ButtonBuilder, EmbedBuilder, StringSelectMenuBuilder, P
 
 module.exports = async (Client, interaction, Ticket) => {
 
+    interaction.deferReply({ ephemeral: true });
+
     async function genID() {
         let length = await Client.Historic.findAll();
         let currLength = await Client.Ticket.findAll();
@@ -29,11 +31,11 @@ module.exports = async (Client, interaction, Ticket) => {
 
     let hasTicket = await Client.Ticket.findOne({ where: { ownerId: interaction.user.id }});
     if (hasTicket) {
-        interaction.reply({ embeds: [
+        interaction.editReply({ embeds: [
                 new EmbedBuilder()
                     .setColor('cc0000')
                     .setDescription('❌ | Il semblerait que vous ayez déja un salon d\'écoute ouvert ! Veuillez le fermer avant d\'en ouvrir un nouveau.')
-            ], ephemeral: true })
+            ]});
     } else {
         let mainGuild = Client.guilds.cache.get(Client.settings.mainGuildID);
         let parent = mainGuild.channels.cache.get(Client.settings.ticketCategoryID);
@@ -61,7 +63,7 @@ module.exports = async (Client, interaction, Ticket) => {
                 ], components: [row]});
         } catch (e) {
             if (e) {
-                return interaction.reply({
+                return interaction.editReply({
                     embeds: [
                         new EmbedBuilder()
                             .setColor('cc0000')
@@ -73,7 +75,7 @@ module.exports = async (Client, interaction, Ticket) => {
                         
                        > 📱 | Sur mobile : affichez la liste des salons, puis tout en haut cliquez sur le nom du serveur, et une fois sur le menu activez l'option Autoriser les messages privés`)
                             .setFooter({ text:'Si le problème persiste, merci de contacter un membre de l\'association.' })
-                    ], ephemeral: true
+                    ]
                 })
             }
         }
@@ -105,15 +107,15 @@ module.exports = async (Client, interaction, Ticket) => {
             attributed: null,
         });
 
-        // try {
-        //     interaction.reply({ embeds: [
-        //             new EmbedBuilder()
-        //                 .setColor('GREEN')
-        //                 .setDescription('✅ | Votre demande d\'écoute à bien été prise en compte, veuillez continuer par messages privés.')
-        //         ], ephemeral: true});
-        // } catch (e) {
-        //     Client.functions.error(e);
-        // }
+        try {
+            interaction.editReply({ embeds: [
+                    new EmbedBuilder()
+                        .setColor('9bd2d2')
+                        .setDescription('✅ | Votre demande d\'écoute à bien été prise en compte, veuillez continuer par messages privés.')
+                ]});
+        } catch (e) {
+            Client.functions.error(Client, e);
+        }
         // TODO: Removed for crash hotfixing
 
         let available = await Client.available.findAll({ where: { occupied: false }});
