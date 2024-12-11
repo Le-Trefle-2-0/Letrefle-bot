@@ -1,4 +1,4 @@
-const {EmbedBuilder, SelectMenuBuilder, ActionRowBuilder} = require('discord.js')
+const {EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder} = require('discord.js')
 
 module.exports = async (Client, interaction) => {
     let role = await interaction.message.guild.roles.fetch(Client.settings.referentRoleID);
@@ -44,7 +44,7 @@ module.exports = async (Client, interaction) => {
 
     let selectRow = new ActionRowBuilder()
         .addComponents(
-            new SelectMenuBuilder()
+            new StringSelectMenuBuilder()
                 .setCustomId('ReportTicket')
                 .addOptions(options)
         );
