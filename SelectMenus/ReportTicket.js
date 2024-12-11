@@ -1,5 +1,6 @@
 const {EmbedBuilder} = require('discord.js');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 module.exports = async (Client, interaction) => {
     let role = await interaction.message.guild.roles.fetch(Client.settings.referentRoleID);
@@ -37,27 +38,19 @@ module.exports = async (Client, interaction) => {
         ], ephemeral: true
     });
 
-    bcrypt.hash(ticket.ownerID, 10, async (err, hash) => {
-        if (err) return interaction.reply({
-            embeds: [
-                new EmbedBuilder()
-                    .setColor('9bd2d2')
-                    .setDescription(':warning: | Une erreur est survenue lors du chiffrement. Merci de signaler cette erreur aux techniciens.')
-            ], ephemeral: true
-        });
+    let userID = crypto.createHash('sha256').update(ticket.ownerID).digest('hex');
 
-        let report = await Client.Report.create({
-            userID: hash,
-            timestamp: Date.now(),
-            reason,
-        });
+    let report = await Client.Report.create({
+        userID,
+        timestamp: Date.now(),
+        reason,
+    });
 
-        interaction.reply({
-            embeds: [
-                new EmbedBuilder()
-                    .setColor('9bd2d2')
-                    .setDescription(`:white_check_mark: | La vigilance à bien été enregistrée pour la raison \`${reason}\``)
-            ]
-        });
+    interaction.reply({
+        embeds: [
+            new EmbedBuilder()
+                .setColor('9bd2d2')
+                .setDescription(`:white_check_mark: | La vigilance à bien été enregistrée pour la raison \`${reason}\``)
+        ]
     });
 }

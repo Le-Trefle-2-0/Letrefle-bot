@@ -1,4 +1,5 @@
 const {ActionRowBuilder, ButtonBuilder, EmbedBuilder, StringSelectMenuBuilder, PermissionFlagsBits, ButtonStyle} = require('discord.js');
+const crypto = require('crypto');
 
 module.exports = async (Client, interaction, Ticket) => {
 
@@ -141,6 +142,27 @@ module.exports = async (Client, interaction, Ticket) => {
                     .setEmoji('⚠')
                     .setStyle(ButtonStyle.Danger)
             );
+
+        let hash = crypto.createHash('sha256').update(interaction.user.id).digest('hex');
+        let reports = await Client.Report.findAll({ where: { userID: hash }});
+
+        if (reports.length > 0) {
+            let string = '';
+            for (let i of Object.values(reports)) {
+                string += `\n${i.reason} (<t:${Math.round((new Date(i.createdAt).getTime()/1000))}:R>)`;
+            }
+            let reportEmbed = new EmbedBuilder()
+                .setColor('9bd2d2')
+                .setDescription('🚨 | Utilisateur signalé par le passé pour les raisons suivantes :\n'+string);
+
+            ticketChannel.send({ 
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('9bd2d2')
+                        .setDescription('🚨 | Utilisateur signalé par le passé pour les raisons suivantes :\n'+string)
+                ]
+            });
+        }
 
         if (options.length < 1) {
             interaction.user.send({ embeds: [

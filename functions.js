@@ -418,7 +418,7 @@ module.exports = {
                                     .setLabel('Vigilance')
                                     .setEmoji('🔴')
                                     .setStyle(ButtonStyle.Secondary)
-                                    .setDisabled(true),
+                                    .setDisabled(false),
 
                                 new ButtonBuilder()
                                     .setCustomId('AnonyLift')
