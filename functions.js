@@ -583,6 +583,7 @@ module.exports = {
 
     error: async (Client, error) => {
         console.log(`${Date.now()} - Critical error :`);
+        if (!error) return;
         console.log(error);
 
         if (error.length >= 1500) {
