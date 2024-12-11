@@ -1,5 +1,5 @@
 const {EmbedBuilder, AttachmentBuilder, ActionRowBuilder, ButtonStyle, ButtonBuilder} = require('discord.js');
-const {readFile, writeFile, unlink} = require('fs');
+const {createWriteStream} = require('fs');
 const moment = require('moment');
 const crypto = require('crypto');
 const transcript = require('discord-html-transcripts');
@@ -56,28 +56,14 @@ module.exports = async (Client, interaction) => {
 
                 const listenTranscript = await transcript.createTranscript(ticketChannel, {
                     limit: -1,
-                    returnType: 'attachment',
+                    returnType: 'buffer',
                     filename: `transcript-${ticketChannel.name}.html`,
                     saveImages: true,
                     footerText: 'Transcript confidentiel - Le Trèfle 2.0 - Tout repartage contrevient au règlement intérieur de l\'association.',
                     poweredBy: false,
                 });
 
-                let mainGuild = Client.guilds.cache.get(Client.settings.mainGuildID);
-                if (mainGuild) {
-                    let transcriptChannel = await mainGuild.channels.fetch(Client.settings.transcriptChannelID);
-                    if (transcriptChannel) {
-                        try {
-                            await transcriptChannel.send({ files: [listenTranscript]});
-                        } catch (e) {
-                            if (e) {
-                                throw e;
-                            } else {
-                                ticketChannel.delete();
-                            }
-                        }
-                    }
-                }
+                createWriteStream(`./Transcripts/${ticket.ticketID}.html`).write(listenTranscript);
             }
         }
 
