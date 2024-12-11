@@ -1,6 +1,6 @@
 const {EmbedBuilder, ActionRowBuilder, ButtonBuilder} = require('discord.js');
 const ms = require('ms');
-const { where } = require('sequelize');
+const { Op } = require('sequelize');
 const crypto = require('crypto');
 
 module.exports = {
@@ -11,16 +11,16 @@ module.exports = {
             type: 'string',
             desc: 'Type de recherche',
             required: true,
-            // choices: [
-            //     {
-            //         name: 'Bénévole',
-            //         value: 'volunteer'
-            //     },
-            //     {
-            //         name: 'Utilisateur',
-            //         value: 'user'
-            //     },
-            // ]
+            choices: [
+                {
+                    name: 'Bénévole',
+                    value: 'volunteer'
+                },
+                {
+                    name: 'Utilisateur',
+                    value: 'user'
+                },
+            ]
         },
         {
             name: 'pseudo',
@@ -28,6 +28,12 @@ module.exports = {
             desc: 'Pseudo de l\'utilisateur',
             required: true
         },
+        {
+            name: 'page',
+            type: 'string',
+            desc: 'Page à afficher',
+            required: false
+        }
     ],
     run: async (Client, interaction) => {
         let user = interaction.options.getMember('pseudo');
@@ -39,18 +45,18 @@ module.exports = {
             ], ephemeral: true
         });
 
-        await interaction.deferReply({ephemeral: true});
+        await interaction.deferReply();
 
         let type = interaction.options.getString('type');
         let historic;
 
-        if (type == 'bénévole') {
+        if (type == 'volunteer') {
             historic = await Client.Historic.findAll({
                 where: {
                     attributed: user.id
                 }
             });
-        } else if (type == 'usager') {
+        } else if (type == 'user') {
             historic = await Client.Historic.findAll({
                 where: {
                     ownerID: crypto.createHash('sha256').update(user.id).digest('hex')
@@ -80,38 +86,43 @@ module.exports = {
         historic = historic.sort((a, b) => b.openTimestamp - a.openTimestamp);
 
         let string = '';
+        let array = [];
         for (let i = 0; i < historic.length; i++) {
-            string += `**Numéro d'écoute :** ${historic[i].ticketID}\n**Date :** <t:${Math.round(historic[i].openTimestamp/1000)}:d> (<t:${Math.round(historic[i].openTimestamp/1000)}:R>)\n**Durée de l'écoute :** ${ms(historic[i].duration, {long:true})}\n\n`;
+            let newString = `**Numéro d'écoute :** ${historic[i].ticketID}\n**Date :** <t:${Math.round(historic[i].openTimestamp/1000)}:d> (<t:${Math.round(historic[i].openTimestamp/1000)}:R>)\n**Durée de l'écoute :** ${ms(historic[i].duration, {long:true})}\n\n`;
+            if (string.length+newString.length > 512) {
+                array.push(string);
+                string = newString;
+            } else {
+                string += newString;
+            }
         }
 
-        console.log(string)
-
-        if (string.length > 512) {
-            let split = string.match(/[\s\s\S]{1,512}/g);
+        if (array.length > 1) {
             let embeds = [];
-            for (let i = 0; i < split.length; i++) {
+            for (let i = 0; i < array.length; i++) {
                 embeds.push(
                     new EmbedBuilder()
                         .setColor('9bd2d2')
-                        .setTitle(`Historique d'écoute de ${user.displayName}`)
-                        .setDescription(split[i])
-                        .setFooter({text: `Page ${i+1}/${split.length}`})
+                        .setTitle(`Historique d'écoute ${user ? `de ${user.displayName}` : 'sur 12h'}`)
+                        .setDescription(array[i])
+                        .setFooter({text: `Page ${i+1}/${array.length}`})
                 );
             }
 
             if (!Client.pages) Client.pages = {};
+            let page = parseInt(interaction.options.getString('page'))-1 || 0;
 
             interaction.editReply({
-                embeds: [embeds[0]],
+                embeds: [embeds[page]],
                 components: [
                     new ActionRowBuilder()
                         .addComponents(
                             new ButtonBuilder()
-                                .setCustomId('previous')
+                                .setCustomId('PreviousPage')
                                 .setLabel('Page précédente')
                                 .setStyle('2'),
                             new ButtonBuilder()
-                                .setCustomId('next')
+                                .setCustomId('NextPage')
                                 .setLabel('Page suivante')
                                 .setStyle('2')
                         )
@@ -120,12 +131,16 @@ module.exports = {
 
             let message = await interaction.fetchReply();
             
-            Client.pages[message.id] = {embeds, page: 0};
+            Client.pages[message.id] = { pages: embeds, pageNumber: page};
+
+            setTimeout(() => {
+                delete Client.pages[message.id];
+            }, 300000);
         } else {
             let embeds = [
                 new EmbedBuilder()
                     .setColor('9bd2d2')
-                    .setTitle(`Historique d'écoute de ${user.displayName}`)
+                    .setTitle(`Historique d'écoute ${user ? `de ${user.displayName}` : 'sur 12h'}`)
                     .setDescription(string)
             ];
 
