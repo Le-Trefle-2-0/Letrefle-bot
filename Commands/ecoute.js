@@ -3,6 +3,7 @@ const ms = require('ms');
 const { Op } = require('sequelize');
 const crypto = require('crypto');
 const { time } = require('console');
+const fs = require('fs');
 
 module.exports = {
     description: 'Consulter les informations d\'une écoute',
@@ -74,6 +75,15 @@ module.exports = {
             componentType: ComponentType.Button,
             time: 300000
         }).on('collect', async i => {
+            if (!fs.existsSync(`./Transcripts/${ticket.ticketID}.html`)) {
+                return i.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('db3226')
+                            .setDescription(':x: | Aucun transcript n\'a été trouvé.')
+                    ], ephemeral: true
+                });
+            }
             let transcript = new AttachmentBuilder(`./Transcripts/${ticket.ticketID}.html`);
             if (!transcript) {
                 return i.reply({
