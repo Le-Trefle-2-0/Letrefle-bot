@@ -437,8 +437,13 @@ module.exports = async (Client) => {
 
         try {
             await rest.put(
-                Routes.applicationCommands(Client.user.id),
+                Routes.applicationGuildCommands(Client.user.id, Client.settings.mainGuildID),
                 { body: commands }
+            );
+
+            await rest.put(
+                Routes.applicationCommands(Client.user.id),
+                { body: [] }
             );
         } catch (e) {
             console.log(e)
