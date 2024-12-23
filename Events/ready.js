@@ -7,13 +7,7 @@ const {AttachmentBuilder} = require('discord.js');
 const fs = require('fs');
 
 module.exports = async (Client) => {
-    await Client.Ticket.sync();
-    await Client.Historic.sync();
-    await Client.reOpen.sync();
-    await Client.available.sync();
-    await Client.open.sync();
-    await Client.Report.sync();
-    await Client.spectators.sync();
+    await Client.db.sync({ alter: true });
 
     console.log(('─────────────────────────────────\n' +
         '────────▄███▄───────▄███▄────────\n' +
