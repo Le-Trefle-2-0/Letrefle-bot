@@ -26,7 +26,9 @@ module.exports = {
             }
         });
 
-        if (historic.length == 0) {
+        let openTickets = await Client.Ticket.findAll(); 
+
+        if (historic.length == 0 && openTickets.length == 0) {
             return interaction.editReply({
                 embeds: [
                     new EmbedBuilder()
@@ -55,20 +57,28 @@ module.exports = {
 
         let string = '';
         let endString = '';
+        let startString = '';
+        if (openTickets.length > 0) {
+            startString = `**Écoutes en cours :** (${openTickets.length})\n`;
+        }
+        openTickets.forEach(ticket => {
+            let newString = `Écoute ${ticket.ticketID} - Ouverte depuis <t:${Math.round(new Date(ticket.createdAt).getTime()/1000)}:R>\n`;
+            startString += newString;
+        });
         for (let user in tickets) {
             let userTickets = tickets[user];
             if (userTickets[0].attributed) {
                 userTickets = userTickets.sort((a, b) => b.openTimestamp - a.openTimestamp);
                 let userString = `<@${userTickets[0].attributed}> (${userTickets.length} écoutes)\n`;
                 userTickets.forEach(ticket => {
-                    userString += `Écoute ${ticket.id} - ${ms(ticket.closeTimestamp - ticket.openTimestamp, {long: true})}\n`;
+                    userString += `Écoute ${ticket.ticketID} - ${ms(ticket.closeTimestamp - ticket.openTimestamp, {long: true})}\n`;
                 });
                 string += userString + '\n';
             } else {
                 userTickets = userTickets.sort((a, b) => b.openTimestamp - a.openTimestamp);
                 let userString = '';
                 userTickets.forEach(ticket => {
-                    userString += `Écoute ${ticket.id} - ${ms(ticket.closeTimestamp - ticket.openTimestamp, {long: true})}\n`;
+                    userString += `Écoute ${ticket.ticketID} - ${ms(ticket.closeTimestamp - ticket.openTimestamp, {long: true})}\n`;
                 });
                 endString += `**Non attribuées :** (${userTickets.length})\n${userString}\n`;
             }
@@ -78,8 +88,8 @@ module.exports = {
             embeds: [
                 new EmbedBuilder()
                     .setColor('9bd2d2')
-                    .setTitle(`Rapport de permanence du ${new Date(browseStartDate).toLocaleDateString()} - Total : ${historic.length} écoutes`)
-                    .setDescription(`${string}${endString}`)
+                    .setTitle(`Rapport de permanence du ${new Date(browseStartDate).toLocaleDateString('fr-FR')} - Total : ${historic.length + openTickets.length} écoutes`)
+                    .setDescription(`${startString}${string}${endString}`)
             ]
         });
     }
