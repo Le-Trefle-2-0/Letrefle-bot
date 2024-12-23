@@ -111,6 +111,7 @@ Client.Historic = Client.db.define('historic', {
     attributed: Sequelize.TEXT,
     problematic: Sequelize.TEXT,
     observations: Sequelize.TEXT,
+    complement: Sequelize.TEXT,
 });
 
 // Save reopen timestamp

@@ -22,6 +22,15 @@ module.exports = async (Client, interaction) => {
                 ephemeral: true
             });
 
+            let historic = await Client.Historic.findOne({ where: { ticketID: interaction.channel.name } });
+            if (historic) {
+                historic.update({
+                    problematic: interaction.fields.getTextInputValue('problematic'),
+                    observations: interaction.fields.getTextInputValue('impressions'),
+                    complement: interaction.fields.getTextInputValue('suplement'),
+                });
+            }
+
             setTimeout(() => {
                 interaction.channel.delete();
             }, 5000);
