@@ -3,7 +3,7 @@ const crypto = require('crypto');
 
 module.exports = async (Client, interaction, Ticket) => {
 
-    interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     async function genID() {
         let length = await Client.Historic.findAll();
