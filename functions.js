@@ -459,22 +459,30 @@ module.exports = {
                             ephemeral: true
                         });
 
+                        let attributedTimestamp = Date.now();
+                        if (ticket.attributedAt) attributedTimestamp = ticket.attributedAt;
+
                         await ticket.update({
                             ticketID: ticket.ticketID,
                             ownerID: ticket.ownerID,
                             channelID: ticket.channelID,
-                            attributed: userID
+                            attributed: userID,
+                            attributedAt: attributedTimestamp
                         });
                     }
                 } else {
                     let oldUser = await Client.users.fetch(ticket.attributed);
                     let occupied = false;
 
+                    let attributedTimestamp = Date.now();
+                    if (ticket.attributedAt) attributedTimestamp = ticket.attributedAt;
+
                     await ticket.update({
                         ticketID: ticket.ticketID,
                         ownerID: ticket.ownerID,
                         channelID: ticket.channelID,
-                        attributed: userID
+                        attributed: userID,
+                        attributedAt: attributedTimestamp
                     });
 
                     let tickets = await Client.Ticket.findAll();

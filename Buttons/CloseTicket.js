@@ -91,10 +91,14 @@ module.exports = async (Client, interaction) => {
 
         let hash = crypto.createHash('sha256').update(ticket.ownerID).digest('hex');
 
+        let openTimestamp;
+        if (ticket.attributedAt) openTimestamp = new Date(ticket.attributedAt).getTime();
+        else openTimestamp = new Date(ticket.createdAt).getTime();
+
         let historic = await Client.Historic.create({
             ticketID: ticket.ticketID,
             ownerID: hash,
-            openTimestamp: new Date(ticket.createdAt).getTime(),
+            openTimestamp,
             closeTimestamp: Date.now(),
             duration: Date.now() - ticket.createdAt,
             attributed: ticket.attributed,

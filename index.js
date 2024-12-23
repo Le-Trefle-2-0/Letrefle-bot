@@ -98,6 +98,7 @@ Client.Ticket = Client.db.define('ticket', {
     ownerID: Sequelize.TEXT,
     channelID: Sequelize.TEXT,
     attributed: Sequelize.TEXT,
+    attributedAt: Sequelize.NUMBER,
 });
 
 // Initiating historic ticket DB model
@@ -108,6 +109,8 @@ Client.Historic = Client.db.define('historic', {
     closeTimestamp: Sequelize.NUMBER,
     duration: Sequelize.NUMBER,
     attributed: Sequelize.TEXT,
+    problematic: Sequelize.TEXT,
+    observations: Sequelize.TEXT,
 });
 
 // Save reopen timestamp
