@@ -5,6 +5,13 @@ module.exports = async (Client, interaction) => {
 
     let userDB = await Client.available.findOne({ where: { userID: user.id }});
     if (userDB) {
+        let service = await Client.services.findOne({ where: { userID: user.id, endTimestamp: null } });
+        let ticket = await Client.Ticket.findAll({ where: { attributed: user.id } });
+        if (service && ticket.length == 0) {
+            service.update({ endTimestamp: Date.now() });
+        } else if (ticket.length == 0) {
+            await Client.services.create({ userID: user.id, startTimestamp: new Date(userDB.createdAt).getTime(), endTimestamp: Date.now() });
+        }
         await userDB.destroy();
 
         interaction.reply({

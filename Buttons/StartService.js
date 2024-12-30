@@ -14,6 +14,7 @@ module.exports = async (Client, interaction) => {
         });
     } else {
         await Client.available.create({ userID: user.id, occupied: false });
+        await Client.services.create({ userID: user.id, startTimestamp: Date.now() });
         interaction.reply({
             embeds: [
                 new EmbedBuilder()
