@@ -144,199 +144,199 @@ module.exports = async (Client) => {
         }
 
         let opened = await Client.open.findAll();
-        let planned = {
-            monday: {
-                open: false,
-                close: false,
-            },
-            tuesday: {
-                open: false,
-                close: false,
-            },
-            wednesday: {
-                open: false,
-                close: false,
-            },
-            thursday: {
-                open: false,
-                close: false,
-            },
-            friday: {
-                open: false,
-                close: false,
-            },
-            saturday: {
-                open: false,
-                close: false,
-            },
-            sunday: {
-                open: false,
-                close: false,
-            }
-        }
+        // let planned = {
+        //     monday: {
+        //         open: false,
+        //         close: false,
+        //     },
+        //     tuesday: {
+        //         open: false,
+        //         close: false,
+        //     },
+        //     wednesday: {
+        //         open: false,
+        //         close: false,
+        //     },
+        //     thursday: {
+        //         open: false,
+        //         close: false,
+        //     },
+        //     friday: {
+        //         open: false,
+        //         close: false,
+        //     },
+        //     saturday: {
+        //         open: false,
+        //         close: false,
+        //     },
+        //     sunday: {
+        //         open: false,
+        //         close: false,
+        //     }
+        // }
 
-        let times = Client.settings.toCloseTime
+        // let times = Client.settings.toCloseTime
 
-        for (let i in Object.keys(times)) {
-            switch (i) {
-                case 'monday':
-                    if (times.monday.open) {
-                        for (let i of times.monday.open) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 1`, () => Client.functions.updateChannels(Client, true));
-                        }
+        // for (let i in Object.keys(times)) {
+        //     switch (i) {
+        //         case 'monday':
+        //             if (times.monday.open) {
+        //                 for (let i of times.monday.open) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 1`, () => Client.functions.updateChannels(Client, true));
+        //                 }
 
-                        planned.monday.open = true;
-                    }
+        //                 planned.monday.open = true;
+        //             }
 
-                    if (times.monday.close) {
-                        for (let i of times.monday.close) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 1`, () => Client.functions.updateChannels(Client, false));
-                        }
+        //             if (times.monday.close) {
+        //                 for (let i of times.monday.close) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 1`, () => Client.functions.updateChannels(Client, false));
+        //                 }
 
-                        planned.monday.close = true;
-                    }
-                    break;
+        //                 planned.monday.close = true;
+        //             }
+        //             break;
 
-                case 'tuesday':
-                    if (times.tuesday.open) {
-                        for (let i of times.tuesday.open) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 2`, () => Client.functions.updateChannels(Client, true));
-                        }
+        //         case 'tuesday':
+        //             if (times.tuesday.open) {
+        //                 for (let i of times.tuesday.open) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 2`, () => Client.functions.updateChannels(Client, true));
+        //                 }
 
-                        planned.tuesday.open = true;
-                    }
+        //                 planned.tuesday.open = true;
+        //             }
 
-                    if (times.tuesday.close) {
-                        for (let i of times.tuesday.close) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 2`, () => Client.functions.updateChannels(Client, false));
-                        }
+        //             if (times.tuesday.close) {
+        //                 for (let i of times.tuesday.close) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 2`, () => Client.functions.updateChannels(Client, false));
+        //                 }
 
-                        planned.tuesday.close = true;
-                    }
-                    break;
+        //                 planned.tuesday.close = true;
+        //             }
+        //             break;
 
-                case 'wednesday':
-                    if (times.wednesday.open) {
-                        for (let i of times.wednesday.open) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 3`, () => Client.functions.updateChannels(Client, true));
-                        }
+        //         case 'wednesday':
+        //             if (times.wednesday.open) {
+        //                 for (let i of times.wednesday.open) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 3`, () => Client.functions.updateChannels(Client, true));
+        //                 }
 
-                        planned.wednesday.open = true;
-                    }
+        //                 planned.wednesday.open = true;
+        //             }
 
-                    if (times.wednesday.close) {
-                        for (let i of times.wednesday.close) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 3`, () => Client.functions.updateChannels(Client, false));
-                        }
+        //             if (times.wednesday.close) {
+        //                 for (let i of times.wednesday.close) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 3`, () => Client.functions.updateChannels(Client, false));
+        //                 }
 
-                        planned.wednesday.close = true;
-                    }
-                    break;
+        //                 planned.wednesday.close = true;
+        //             }
+        //             break;
 
-                case 'thursday':
-                    if (times.thursday.open) {
-                        for (let i of times.thursday.open) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 4`, () => Client.functions.updateChannels(Client, true));
-                        }
+        //         case 'thursday':
+        //             if (times.thursday.open) {
+        //                 for (let i of times.thursday.open) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 4`, () => Client.functions.updateChannels(Client, true));
+        //                 }
 
-                        planned.thursday.open = true;
-                    }
+        //                 planned.thursday.open = true;
+        //             }
 
-                    if (times.thursday.close) {
-                        for (let i of times.thursday.close) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 4`, () => Client.functions.updateChannels(Client, false));
-                        }
+        //             if (times.thursday.close) {
+        //                 for (let i of times.thursday.close) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 4`, () => Client.functions.updateChannels(Client, false));
+        //                 }
 
-                        planned.thursday.close = true;
-                    }
-                    break;
+        //                 planned.thursday.close = true;
+        //             }
+        //             break;
 
-                case 'friday':
-                    if (times.friday.open) {
-                        for (let i of times.friday.open) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 5`, () => Client.functions.updateChannels(Client, true));
-                        }
+        //         case 'friday':
+        //             if (times.friday.open) {
+        //                 for (let i of times.friday.open) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 5`, () => Client.functions.updateChannels(Client, true));
+        //                 }
 
-                        planned.friday.open = true;
-                    }
+        //                 planned.friday.open = true;
+        //             }
 
-                    if (times.friday.close) {
-                        for (let i of times.friday.close) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 5`, () => Client.functions.updateChannels(Client, false));
-                        }
+        //             if (times.friday.close) {
+        //                 for (let i of times.friday.close) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 5`, () => Client.functions.updateChannels(Client, false));
+        //                 }
 
-                        planned.friday.close = true;
-                    }
-                    break;
+        //                 planned.friday.close = true;
+        //             }
+        //             break;
 
-                case 'saturday':
-                    if (times.saturday.open) {
-                        for (let i of times.saturday.open) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 6`, () => Client.functions.updateChannels(Client, true));
-                        }
+        //         case 'saturday':
+        //             if (times.saturday.open) {
+        //                 for (let i of times.saturday.open) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 6`, () => Client.functions.updateChannels(Client, true));
+        //                 }
 
-                        planned.saturday.open = true;
-                    }
+        //                 planned.saturday.open = true;
+        //             }
 
-                    if (times.saturday.close) {
-                        for (let i of times.saturday.close) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 6`, () => Client.functions.updateChannels(Client, false));
-                        }
+        //             if (times.saturday.close) {
+        //                 for (let i of times.saturday.close) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 6`, () => Client.functions.updateChannels(Client, false));
+        //                 }
 
-                        planned.saturday.close = true;
-                    }
-                    break;
+        //                 planned.saturday.close = true;
+        //             }
+        //             break;
 
-                case 'sunday':
-                    if (times.sunday.open) {
-                        for (let i of times.sunday.open) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 7`, () => Client.functions.updateChannels(Client, true));
-                        }
+        //         case 'sunday':
+        //             if (times.sunday.open) {
+        //                 for (let i of times.sunday.open) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 7`, () => Client.functions.updateChannels(Client, true));
+        //                 }
 
-                        planned.sunday.open = true;
-                    }
+        //                 planned.sunday.open = true;
+        //             }
 
-                    if (times.sunday.close) {
-                        for (let i of times.sunday.close) {
-                            scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 7`, Client.functions.updateChannels(Client, false));
-                        }
+        //             if (times.sunday.close) {
+        //                 for (let i of times.sunday.close) {
+        //                     scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * 7`, Client.functions.updateChannels(Client, false));
+        //                 }
 
-                        planned.sunday.close = true;
-                    }
-                    break;
+        //                 planned.sunday.close = true;
+        //             }
+        //             break;
 
-                default:
-                    let count = 0;
-                    for (let i2 of Object.keys(planned)) {
-                        count++
-                        let day = planned[i2];
-                        if (!day.open) {
-                            if (times.default.open) {
-                                for (let i of times.default.open) {
-                                    scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * ${count}`, () => {
-                                        Client.functions.updateChannels(Client, true)
-                                    });
-                                }
-                            }
+        //         default:
+        //             let count = 0;
+        //             for (let i2 of Object.keys(planned)) {
+        //                 count++
+        //                 let day = planned[i2];
+        //                 if (!day.open) {
+        //                     if (times.default.open) {
+        //                         for (let i of times.default.open) {
+        //                             scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * ${count}`, () => {
+        //                                 Client.functions.updateChannels(Client, true)
+        //                             });
+        //                         }
+        //                     }
 
-                            planned[i2].open = true;
-                        }
+        //                     planned[i2].open = true;
+        //                 }
 
-                        if (!day.close) {
-                            if (times.default.close) {
-                                for (let i of times.default.close) {
-                                    scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * ${count}`, () => {
-                                        Client.functions.updateChannels(Client, false)
-                                    });
-                                }
-                            }
+        //                 if (!day.close) {
+        //                     if (times.default.close) {
+        //                         for (let i of times.default.close) {
+        //                             scheduleJob(`${i.split('h')[1]} ${i.split('h')[0]} * * ${count}`, () => {
+        //                                 Client.functions.updateChannels(Client, false)
+        //                             });
+        //                         }
+        //                     }
 
-                            planned[i2].close = true
-                        }
-                    }
-                    break;
-            }
-        }
+        //                     planned[i2].close = true
+        //                 }
+        //             }
+        //             break;
+        //     }
+        // }
 
 
         for (let i of opened) {
