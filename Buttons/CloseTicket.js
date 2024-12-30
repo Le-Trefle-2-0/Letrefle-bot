@@ -83,6 +83,11 @@ module.exports = async (Client, interaction) => {
                         userID: userDB.userID,
                         occupied: false,
                     })
+                } else {
+                    let service = await Client.services.findOne({ where: { userID: ticket.attributed, endTimestamp: null } });
+                    if (service) {
+                        service.update({ endTimestamp: Date.now() });
+                    }
                 }
             }
         }

@@ -133,4 +133,10 @@ Client.spectators = Client.db.define('spectators', {
     userID: Sequelize.TEXT,
 });
 
+Client.services = Client.db.define('services', {
+    userID: Sequelize.TEXT,
+    startTimestamp: Sequelize.NUMBER,
+    endTimestamp: Sequelize.NUMBER,
+});
+
 Client.login(Client.settings.secret_token).then(() => {});
