@@ -119,7 +119,6 @@ module.exports = async (Client, interaction) => {
         for (let i in Object.keys(available)) {
             let service = await Client.services.findOne({ where: { userID: available[i].userID, endTimestamp: null } });
             let tickets = await Client.Ticket.findAll({ where: { attributed: available[i].userID } });
-            console.log(tickets.length)
             if (service && tickets.length == 0) {
                 await service.update({ endTimestamp: Date.now() });
             } else if (tickets.length == 0) {
