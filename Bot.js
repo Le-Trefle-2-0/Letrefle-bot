@@ -5,10 +5,9 @@ const client = new Client({ intents: 28786 });
 client.commands = new Collection();
 client.buttons = new Collection();
 client.menus = new Collection();
-client.solar = {}
 
 module.exports.login = () => {
-	client.login(process.env.SECRET_TOKEN);
+	client.login(process.env.DISCORD_TOKEN);
 
 	return client;
 };
