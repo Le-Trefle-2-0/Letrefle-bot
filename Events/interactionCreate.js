@@ -11,7 +11,7 @@ module.exports = async (Client, interaction) => {
         }
     }
 
-    if (interaction.isSelectMenu()) {
+    if (interaction.isStringSelectMenu()) {
         let menu = Client.Discord.menus.get(interaction.customId);
 
         if (menu) {
@@ -24,13 +24,13 @@ module.exports = async (Client, interaction) => {
     }
 
     if (interaction.isCommand()) {
-        let command = Client.commands.get(interaction.commandName)
+        let command = Client.Discord.commands.get(interaction.commandName)
 
         if (command) {
             try {
                 command.run(Client, interaction)
             } catch (e) {
-                if (e) Client.logs.error(e);
+                if (e) console.log(e);
             }
         }
     }
