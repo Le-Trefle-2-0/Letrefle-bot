@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "colors": "^1.4.0",
+    "discord.js": "^14.21.0",
+    "dotenv": "^16.5.0",
+    "nodemon": "^3.1.10",
+    "socket.io-client": "^4.8.1"
+  },
+  "name": "letrefle-bot",
+  "version": "1.0.0",
+  "description": "This is a simple Discord bot template using discord.js v14\r **This is not a complete featured bot, it is up to you to make your own commands & functionnalities for it**",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js NODE_ENV=production",
+    "dev": "nodemon index.js NODE_ENV=dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
