@@ -101,6 +101,10 @@ module.exports = async (Client, interaction, Ticket) => {
             ViewChannel: true
         });
 
+        await ticketChannel.permissionOverwrites.create(ticketChannel.guild.roles.cache.get(Client.settings.managerRoleID), {
+            ViewChannel: true
+        });
+
         let ticket = await Client.Ticket.create({
             ticketID: id,
             ownerID: interaction.user.id,
