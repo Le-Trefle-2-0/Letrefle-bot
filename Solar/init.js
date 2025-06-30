@@ -10,6 +10,6 @@ module.exports = async (Client) => {
 
     const body = await checkKey.json();
     Client.Solar.user = body.user;
-    console.log(Client.Solar.user);
+    if (Client.Solar.user.role !== 'bot') throw new Error(`Le compte connecté n'est pas un compte BOT compatible.`);
     socket.init(Client);
 }
