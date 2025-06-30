@@ -19,7 +19,7 @@ module.exports = async (Client, message) => {
                 }
             });
 
-            fetch(`${Client.settings.solar.url}/api/messages/${Ticket.channelId}`, {
+            const save = await fetch(`${Client.settings.solar.url}/api/messages/${Ticket.channelId}`, {
                 method: 'POST',
                 body: JSON.stringify({
                     content: message.content,
@@ -34,7 +34,7 @@ module.exports = async (Client, message) => {
                     },
                     token: process.env.SOLAR_TOKEN
                 }),
-            })
+            });
         }
     }
 };

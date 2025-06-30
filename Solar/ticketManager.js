@@ -10,6 +10,7 @@ module.exports = {
             body: JSON.stringify(payload),
         });
         if (res.status === 200) {
+            Client.Solar.socket.emit('update', {})
             return res.json();
         } else return false;
     },
