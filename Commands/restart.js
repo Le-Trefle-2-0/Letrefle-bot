@@ -1,4 +1,3 @@
-const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 const {exec} = require('child_process');
 
 module.exports = {
@@ -6,7 +5,7 @@ module.exports = {
     options: [],
     run: async (Client, interaction) => {
         if (interaction.user.id == '369564132770578432') {
-            exec(`forever restart index.js`, (err, stdout, stderr) => {
+            exec(`pm2 restart index.js`, (err, stdout, stderr) => {
                 if (err) {
                     interaction.reply({
                         content: 'Erreur lors du redémarrage du bot :\n```diff\n' + err + '```',

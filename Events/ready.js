@@ -2,7 +2,7 @@ const colors = require('colors');
 const {scheduleJob} = require('node-schedule');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {REST} = require('@discordjs/rest');
-const {Routes} = require('discord-api-types/v9')
+const {Routes} = require('discord-api-types/v10')
 const {AttachmentBuilder} = require('discord.js');
 const fs = require('fs');
 
@@ -365,7 +365,7 @@ module.exports = async (Client) => {
 
                                 if (option.choices) {
                                     option.choices.forEach(choice => {
-                                        opt.addChoice(choice.name, choice.value)
+                                        opt.addChoices({ name: choice.name, value: choice.value })
                                     });
                                 }
 
@@ -427,7 +427,7 @@ module.exports = async (Client) => {
            commands.push(data.toJSON());
         });
 
-        const rest = new REST({ version: '9' }).setToken(Client.token);
+        const rest = new REST({ version: '10' }).setToken(Client.token);
 
         try {
             await rest.put(
