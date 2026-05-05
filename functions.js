@@ -1,5 +1,5 @@
 
-const {ActivityType, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle} = require('discord.js')
+const {ActivityType, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, MessageFlags} = require('discord.js')
 const {post} = require('axios')
 
 module.exports = {
@@ -104,7 +104,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription('✅ | La permanence a bien été ouverte !')
-                ], ephemeral: true})
+                ], flags: [MessageFlags.Ephemeral]})
         }
 
         let i = 0;
@@ -213,7 +213,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription('✅ | La permanence à bien été fermée !')
-                ], ephemeral: true
+                ], flags: [MessageFlags.Ephemeral]
             });
         }
     },
@@ -403,7 +403,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription(':warning: | Cet utilisateur ne semble pas être dans la permanence.')
-            ], ephemeral: true
+            ], flags: [MessageFlags.Ephemeral]
         });
 
         await userDB.update({
@@ -496,7 +496,7 @@ module.exports = {
 
                         interaction.reply({
                             content: 'L\'utilisateur est bien assigné !',
-                            ephemeral: true
+                            flags: [MessageFlags.Ephemeral]
                         });
 
                         let attributedTimestamp = Date.now();
@@ -588,7 +588,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription(':warning: | Cet utilisateur ne semble pas être dans la permanence.')
-            ], ephemeral: true
+            ], flags: [MessageFlags.Ephemeral]
         });
 
         let mainGuild = await Client.guilds.fetch(Client.settings.mainGuildID);

@@ -1,4 +1,4 @@
-const {EmbedBuilder} = require('discord.js');
+const {EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags} = require('discord.js');
 
 module.exports = async (Client, interaction) => {
     let spec = await Client.spectators.findOne({ where: {userID: interaction.user.id}});
@@ -13,34 +13,61 @@ module.exports = async (Client, interaction) => {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription(':eyes: | Vous avez bien quitté le mode spectateur')
-            ], ephemeral: true
+            ], flags: [MessageFlags.Ephemeral]
         });
     } else {
-        spec = await Client.spectators.create({
-            userID: interaction.user.id,
-        });
+        const referentRoleID = Client.settings.referentRoleID;
+        const referentRole = interaction.guild.roles.cache.get(referentRoleID);
+        
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId(`ApproveSpectator_${interaction.user.id}`)
+                    .setLabel('Valider la demande')
+                    .setStyle(ButtonStyle.Success),
+            );
 
-        update(true);
-        Client.functions.updateAvailable(Client);
+        const embed = new EmbedBuilder()
+            .setColor('9bd2d2')
+            .setTitle('Demande de mode spectateur')
+            .setDescription(`Le bénévole <@${interaction.user.id}> souhaite passer en mode spectateur pour lire les écoutes en cours.\n\nCette demande expire dans 5 minutes.`)
+            .setTimestamp();
+
+        const msg = await interaction.channel.send({
+            content: referentRole ? `<@&${referentRoleID}>` : null,
+            embeds: [embed],
+            components: [row]
+        });
 
         interaction.reply({
-            embeds: [
-                new EmbedBuilder()
-                    .setColor('9bd2d2')
-                    .setDescription(':eyes: | Vous avez bien rejoint la permanence en tant que spectateur')
-            ], ephemeral: true
+            content: ':hourglass: | Votre demande a été envoyée aux référents pour validation.',
+            flags: [MessageFlags.Ephemeral]
         });
+
+        // Suppression automatique après 5 minutes
+        setTimeout(async () => {
+            try {
+                const fetchedMsg = await interaction.channel.messages.fetch(msg.id).catch(() => null);
+                if (fetchedMsg) {
+                    await fetchedMsg.delete();
+                }
+            } catch (e) {
+                console.error('Erreur lors de la suppression de la demande de spectateur:', e);
+            }
+        }, 5 * 60 * 1000);
     }
 
     async function update(status) {
         let tickets = await Client.Ticket.findAll();
-        for (let i in Object.keys(tickets)) {
-            if (tickets[i].attributed !== interaction.user.id) {
+        for (let ticket of tickets) {
+            // Pour quitter (status=false), on retire les permissions sur tous les tickets (sauf le sien s'il en a un)
+            // Pour entrer (status=true), ce n'est plus géré ici mais dans ApproveSpectator.js après validation.
+            if (ticket.attributed !== interaction.user.id) {
                 let guild = Client.guilds.cache.get(Client.settings.mainGuildID);
                 if (guild) {
-                    let channel = await guild.channels.fetch(tickets[i].channelID);
+                    let channel = await guild.channels.fetch(ticket.channelID).catch(() => null);
                     if (channel) {
-                        channel.permissionOverwrites.create(interaction.member, {
+                        await channel.permissionOverwrites.create(interaction.member, {
                             ViewChannel: status,
                             SendMessages: false,
                         });

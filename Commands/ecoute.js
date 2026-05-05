@@ -1,4 +1,4 @@
-const {EmbedBuilder, ActionRowBuilder, ButtonBuilder, ComponentType, AttachmentBuilder} = require('discord.js');
+const {EmbedBuilder, ActionRowBuilder, ButtonBuilder, ComponentType, AttachmentBuilder, MessageFlags} = require('discord.js');
 const ms = require('ms');
 const { Op } = require('sequelize');
 const crypto = require('crypto');
@@ -38,7 +38,7 @@ module.exports = {
             }
         });
 
-        let message = await interaction.deferReply({ ephemeral: true });
+        let message = await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
         if (!ticket) {
             return interaction.editReply({
@@ -81,7 +81,7 @@ module.exports = {
                         new EmbedBuilder()
                             .setColor('db3226')
                             .setDescription(':x: | Aucun transcript n\'a été trouvé.')
-                    ], ephemeral: true
+                    ], flags: [MessageFlags.Ephemeral]
                 });
             }
             let transcript = new AttachmentBuilder(`./Transcripts/${ticket.ticketID}.html`);
@@ -91,7 +91,7 @@ module.exports = {
                         new EmbedBuilder()
                             .setColor('db3226')
                             .setDescription(':x: | Aucun transcript n\'a été trouvé.')
-                    ], ephemeral: true
+                    ], flags: [MessageFlags.Ephemeral]
                 });
             }
 
@@ -101,7 +101,7 @@ module.exports = {
                         .setColor('9bd2d2')
                         .setDescription('📝 | Voici le transcript de l\'écoute.')
                 ],
-                files: [transcript], ephemeral: true
+                files: [transcript], flags: [MessageFlags.Ephemeral]
             });
         });
     }
