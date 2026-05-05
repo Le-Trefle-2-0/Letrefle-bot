@@ -138,6 +138,10 @@ module.exports = async (Client) => {
                     break;
 
                 case false:
+                    if (Client.reOpenTimeout) clearTimeout(Client.reOpenTimeout);
+                    Client.reOpenTimeout = setTimeout(() => {
+                        Client.functions.open(Client);
+                    }, timestamp - Date.now());
                     Client.functions.close(Client, timestamp)
                     break;
             }

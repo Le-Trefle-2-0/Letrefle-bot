@@ -16,7 +16,9 @@ module.exports = async (Client, interaction) => {
         ], ephemeral: true
     })
 
-    setTimeout(() => {
+    if (Client.reOpenTimeout) clearTimeout(Client.reOpenTimeout);
+
+    Client.reOpenTimeout = setTimeout(() => {
         Client.functions.open(Client)
     }, reopenTimestamp-currTimestamp);
 
@@ -36,11 +38,27 @@ module.exports = async (Client, interaction) => {
                 .setDisabled(true)
         )
 
+    let planningRow = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('EditPlanning')
+                .setLabel('Modifier la programmation')
+                .setStyle(ButtonStyle.Primary)
+                .setEmoji('📝'),
+
+            new ButtonBuilder()
+                .setCustomId('DeletePlanning')
+                .setLabel('Supprimer la programmation')
+                .setStyle(ButtonStyle.Secondary)
+                .setEmoji('🗑️')
+                .setDisabled(false)
+        )
+
     Client.dashboard.message.edit({ embeds: [
             new EmbedBuilder()
                 .setColor('9bd2d2')
                 .setDescription('🔒 | La permanence est actuellement fermée !')
-        ], components: [closedRow], content: null});
+        ], components: [closedRow, planningRow], content: null});
 
     Client.user.setPresence({
         status: 'dnd'
