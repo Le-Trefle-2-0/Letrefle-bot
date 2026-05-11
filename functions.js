@@ -445,27 +445,18 @@ module.exports = {
                             SendMessages: true,
                         });
 
-                        let row = new ActionRowBuilder()
-                            .addComponents(
-                                new ButtonBuilder()
-                                    .setCustomId('CloseTicket')
-                                    .setLabel('Fermer l\'écoute')
-                                    .setEmoji('⚠')
-                                    .setStyle(ButtonStyle.Danger),
+                        await channel.setName('💬・' + ticket.ticketID);
 
-                                new ButtonBuilder()
-                                    .setCustomId('ReportTicket')
-                                    .setLabel('Vigilance')
-                                    .setEmoji('🔴')
-                                    .setStyle(ButtonStyle.Secondary)
-                                    .setDisabled(false),
+                        let row = Client.functions.getTicketButtons(Client);
 
-                                new ButtonBuilder()
-                                    .setCustomId('AnonyLift')
-                                    .setLabel('Levée d\'identifiant')
-                                    .setEmoji('🆔')
-                                    .setStyle(ButtonStyle.Secondary)
-                            )
+                        if (ticket.reportMessageID) {
+                            try {
+                                let reportMsg = await channel.messages.fetch(ticket.reportMessageID);
+                                if (reportMsg) await reportMsg.delete();
+                            } catch (e) {
+                                // console.log('Erreur lors de la suppression du message de vigilance:', e);
+                            }
+                        }
 
                         // await channel.bulkDelete(99);
                         if (interaction.message) {
@@ -656,6 +647,30 @@ module.exports = {
                 })
             }
         }
+    },
+
+    getTicketButtons: (Client) => {
+        return new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('CloseTicket')
+                    .setLabel('Fermer l\'écoute')
+                    .setEmoji('⚠')
+                    .setStyle(ButtonStyle.Danger),
+
+                new ButtonBuilder()
+                    .setCustomId('ReportTicket')
+                    .setLabel('Vigilance')
+                    .setEmoji('🔴')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(false),
+
+                new ButtonBuilder()
+                    .setCustomId('AnonyLift')
+                    .setLabel('Levée d\'identifiant')
+                    .setEmoji('🆔')
+                    .setStyle(ButtonStyle.Secondary)
+            )
     },
 
     loadDM: async (Client) => {

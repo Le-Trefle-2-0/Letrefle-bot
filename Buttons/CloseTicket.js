@@ -33,6 +33,8 @@ module.exports = async (Client, interaction) => {
                     ], components: [row]
                 });
 
+                await ticketChannel.setName('🔒・' + ticket.ticketID);
+
                 let user = await Client.users.fetch(ticket.ownerID);
                 if (user) {
                     try {

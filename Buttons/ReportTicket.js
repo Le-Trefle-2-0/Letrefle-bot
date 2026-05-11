@@ -39,6 +39,10 @@ module.exports = async (Client, interaction) => {
         {
             label: 'Propos inadaptés',
             value: 'Propos inadaptés'
+        },
+        {
+            label: 'Multi-appelant',
+            value: 'Multi-appelant'
         }
     ];
 

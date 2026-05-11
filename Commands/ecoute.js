@@ -59,6 +59,22 @@ module.exports = {
                     .setEmoji('📝')
             );
 
+        let categoriesList = 'Aucune';
+        if (ticket.categories) {
+            try {
+                let categoriesArray = JSON.parse(ticket.categories);
+                if (Array.isArray(categoriesArray) && categoriesArray.length > 0) {
+                    categoriesList = categoriesArray.join(', ');
+                } else if (typeof ticket.categories === 'string' && ticket.categories.length > 0) {
+                    // Fallback pour les anciennes données si jamais
+                    categoriesList = ticket.categories;
+                }
+            } catch (e) {
+                // Fallback si ce n'est pas du JSON
+                categoriesList = ticket.categories;
+            }
+        }
+
         interaction.editReply({
             embeds: [
                 new EmbedBuilder()
@@ -67,6 +83,7 @@ module.exports = {
 
                         Attibution: ${ticket.attributed ? `<@${ticket.attributed}>` : 'Non attribué'}
                         Durée: ${ms(ticket.duration, { long: true })}
+                        Catégories: ${categoriesList}
                         Date de création: <t:${Math.round(ticket.openTimestamp/1000)}:d> (<t:${Math.round(ticket.openTimestamp/1000)}:R>)`)
             ], components: [row]
         });

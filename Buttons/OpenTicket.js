@@ -82,7 +82,7 @@ module.exports = async (Client, interaction, Ticket) => {
         }
 
         let ticketChannel = await mainGuild.channels.create({
-            name: id,
+            name: '👥・'+id,
             topic: 'Salon d\'écoute | ID : '+id,
             parent,
             permissionOverwrites: [
@@ -101,23 +101,6 @@ module.exports = async (Client, interaction, Ticket) => {
             ViewChannel: true
         });
 
-        let ticket = await Client.Ticket.create({
-            ticketID: id,
-            ownerID: interaction.user.id,
-            channelID: ticketChannel.id,
-            attributed: null,
-        });
-
-        try {
-            interaction.editReply({ embeds: [
-                    new EmbedBuilder()
-                        .setColor('9bd2d2')
-                        .setDescription('✅ | Votre demande d\'écoute à bien été prise en compte, veuillez continuer par messages privés.')
-                ]});
-        } catch (e) {
-            Client.functions.error(Client, e);
-        }
-
         let available = await Client.available.findAll({ where: { occupied: false }});
         let options = [];
 
@@ -134,34 +117,52 @@ module.exports = async (Client, interaction, Ticket) => {
 
         let ticketMenuMessage = null;
 
-        let CloseRow = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId('CloseTicket')
-                    .setLabel('Fermer l\'écoute')
-                    .setEmoji('⚠')
-                    .setStyle(ButtonStyle.Danger)
-            );
+        let TicketButtons = Client.functions.getTicketButtons(Client);
 
         let hash = crypto.createHash('sha256').update(interaction.user.id).digest('hex');
-        let reports = await Client.Report.findAll({ where: { userID: hash }});
+        
+        const sixMonthsAgo = Date.now() - (6 * 30 * 24 * 60 * 60 * 1000);
+        let reports = await Client.Report.findAll({ 
+            where: { 
+                userID: hash,
+                timestamp: {
+                    [require('sequelize').Op.gte]: sixMonthsAgo
+                }
+            } 
+        });
 
+        let reportMessage = null;
         if (reports.length > 0) {
             let string = '';
             for (let i of Object.values(reports)) {
-                string += `\n${i.reason} (<t:${Math.round((new Date(i.createdAt).getTime()/1000))}:R>)`;
+                string += `\n${i.reason} (<t:${Math.round(i.timestamp/1000)}:R>)`;
             }
-            let reportEmbed = new EmbedBuilder()
-                .setColor('9bd2d2')
-                .setDescription('🚨 | Utilisateur signalé par le passé pour les raisons suivantes :\n'+string);
 
-            ticketChannel.send({ 
+            reportMessage = await ticketChannel.send({ 
                 embeds: [
                     new EmbedBuilder()
                         .setColor('9bd2d2')
                         .setDescription('🚨 | Utilisateur signalé par le passé pour les raisons suivantes :\n'+string)
                 ]
             });
+        }
+
+        let ticket = await Client.Ticket.create({
+            ticketID: id,
+            ownerID: interaction.user.id,
+            channelID: ticketChannel.id,
+            attributed: null,
+            reportMessageID: reportMessage ? reportMessage.id : null,
+        });
+
+        try {
+            interaction.editReply({ embeds: [
+                    new EmbedBuilder()
+                        .setColor('9bd2d2')
+                        .setDescription('✅ | Votre demande d\'écoute à bien été prise en compte, veuillez continuer par messages privés.')
+                ]});
+        } catch (e) {
+            Client.functions.error(Client, e);
         }
 
         if (options.length < 1) {
@@ -181,7 +182,7 @@ module.exports = async (Client, interaction, Ticket) => {
                     new EmbedBuilder()
                         .setColor('9bd2d2')
                         .setDescription(':warning: | Tous les bénévoles sont actuellement occupés. Merci d\'utiliser la commande `/assigner` pour assigner un nouveau bénévole écoutant.')
-                ], content: `<@&${Client.settings.referentRoleID}>`, row: [CloseRow]
+                ], content: `<@&${Client.settings.referentRoleID}>`, components: [TicketButtons]
             });
         } else {
             let attributeRow = new ActionRowBuilder()
@@ -198,7 +199,7 @@ module.exports = async (Client, interaction, Ticket) => {
                     new EmbedBuilder()
                         .setColor('9bd2d2')
                         .setDescription('🍀 | Nouvelle demande d\'écoute. Veuillez attribuer un bénévole écoutant.')
-                ], components: [attributeRow, CloseRow]
+                ], components: [attributeRow, TicketButtons]
             });
         }
 
