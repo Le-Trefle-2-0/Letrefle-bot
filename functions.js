@@ -202,9 +202,9 @@ module.exports = {
 
         client.functions.updateAvailable(client);
 
-        if (Client.reOpenTimeout) clearTimeout(Client.reOpenTimeout);
+        if (client.reOpenTimeout) clearTimeout(client.reOpenTimeout);
 
-        Client.reOpenTimeout = setTimeout(() => {
+        client.reOpenTimeout = setTimeout(() => {
             client.functions.open(client);
         }, timestamp-Date.now());
 
