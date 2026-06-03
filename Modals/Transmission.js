@@ -11,7 +11,7 @@ module.exports = async (Client, interaction) => {
             let categories = [];
             try {
                 // Récupération des valeurs du menu de sélection "categories"
-                categories = interaction.fields.getSelectMenuValues('categories') || [];
+                categories = interaction.fields.getStringSelectValues('categories') || [];
             } catch (e) {
                 // Si le menu n'est pas présent ou n'a pas été sélectionné
                 console.error('Erreur lors de la récupération des catégories dans le modal:', e);
