@@ -1,9 +1,12 @@
 
-const {ActivityType, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle} = require('discord.js')
+const {ActivityType, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, MessageFlags} = require('discord.js')
 const {post} = require('axios')
 
 module.exports = {
     open: async (client, interaction) => {
+        let reopen = await client.reOpen.findAll();
+        let hasPlanning = reopen.length > 0;
+
         let openRow = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
@@ -20,11 +23,27 @@ module.exports = {
                     .setEmoji('🔒')
             )
 
+        let planningRow = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('EditPlanning')
+                    .setLabel(hasPlanning ? 'Modifier la programmation' : 'Programmer la prochaine permanence')
+                    .setStyle(ButtonStyle.Primary)
+                    .setEmoji('📝'),
+
+                new ButtonBuilder()
+                    .setCustomId('DeletePlanning')
+                    .setLabel('Supprimer la programmation')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setEmoji('🗑️')
+                    .setDisabled(!hasPlanning)
+            )
+
         client.dashboard.message.edit({ embeds: [
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription('🔓 | La permanence est actuellement ouverte !')
-            ], components: [openRow], content: null});
+            ], components: [openRow, planningRow], content: null});
 
         client.user.setPresence({
             status: 'online'
@@ -85,7 +104,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription('✅ | La permanence a bien été ouverte !')
-                ], ephemeral: true})
+                ], flags: [MessageFlags.Ephemeral]})
         }
 
         let i = 0;
@@ -99,6 +118,9 @@ module.exports = {
     },
 
     close: async (client, timestamp, interaction) => {
+        let reopen = await client.reOpen.findAll();
+        let hasPlanning = (reopen.length > 0) || (timestamp != null);
+
         let closedRow = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
@@ -115,11 +137,27 @@ module.exports = {
                     .setDisabled(true)
             );
 
+        let planningRow = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('EditPlanning')
+                    .setLabel(hasPlanning ? 'Modifier la programmation' : 'Programmer la prochaine permanence')
+                    .setStyle(ButtonStyle.Primary)
+                    .setEmoji('📝'),
+
+                new ButtonBuilder()
+                    .setCustomId('DeletePlanning')
+                    .setLabel('Supprimer la programmation')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setEmoji('🗑️')
+                    .setDisabled(!hasPlanning)
+            )
+
         client.dashboard.message.edit({ embeds: [
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription('🔒 | La permanence est actuellement fermée !')
-            ], components: [closedRow], content: null});
+            ], components: [closedRow, planningRow], content: null});
 
         client.user.setPresence({
             status: 'dnd'
@@ -164,7 +202,9 @@ module.exports = {
 
         client.functions.updateAvailable(client);
 
-        setTimeout(() => {
+        if (Client.reOpenTimeout) clearTimeout(Client.reOpenTimeout);
+
+        Client.reOpenTimeout = setTimeout(() => {
             client.functions.open(client);
         }, timestamp-Date.now());
 
@@ -173,7 +213,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription('✅ | La permanence à bien été fermée !')
-                ], ephemeral: true
+                ], flags: [MessageFlags.Ephemeral]
             });
         }
     },
@@ -363,7 +403,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription(':warning: | Cet utilisateur ne semble pas être dans la permanence.')
-            ], ephemeral: true
+            ], flags: [MessageFlags.Ephemeral]
         });
 
         await userDB.update({
@@ -405,27 +445,18 @@ module.exports = {
                             SendMessages: true,
                         });
 
-                        let row = new ActionRowBuilder()
-                            .addComponents(
-                                new ButtonBuilder()
-                                    .setCustomId('CloseTicket')
-                                    .setLabel('Fermer l\'écoute')
-                                    .setEmoji('⚠')
-                                    .setStyle(ButtonStyle.Danger),
+                        await channel.setName('💬・' + ticket.ticketID);
 
-                                new ButtonBuilder()
-                                    .setCustomId('ReportTicket')
-                                    .setLabel('Vigilance')
-                                    .setEmoji('🔴')
-                                    .setStyle(ButtonStyle.Secondary)
-                                    .setDisabled(false),
+                        let row = Client.functions.getTicketButtons(Client);
 
-                                new ButtonBuilder()
-                                    .setCustomId('AnonyLift')
-                                    .setLabel('Levée d\'identifiant')
-                                    .setEmoji('🆔')
-                                    .setStyle(ButtonStyle.Secondary)
-                            )
+                        if (ticket.reportMessageID) {
+                            try {
+                                let reportMsg = await channel.messages.fetch(ticket.reportMessageID);
+                                if (reportMsg) await reportMsg.delete();
+                            } catch (e) {
+                                // console.log('Erreur lors de la suppression du message de vigilance:', e);
+                            }
+                        }
 
                         // await channel.bulkDelete(99);
                         if (interaction.message) {
@@ -456,7 +487,7 @@ module.exports = {
 
                         interaction.reply({
                             content: 'L\'utilisateur est bien assigné !',
-                            ephemeral: true
+                            flags: [MessageFlags.Ephemeral]
                         });
 
                         let attributedTimestamp = Date.now();
@@ -548,7 +579,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setColor('9bd2d2')
                     .setDescription(':warning: | Cet utilisateur ne semble pas être dans la permanence.')
-            ], ephemeral: true
+            ], flags: [MessageFlags.Ephemeral]
         });
 
         let mainGuild = await Client.guilds.fetch(Client.settings.mainGuildID);
@@ -616,6 +647,30 @@ module.exports = {
                 })
             }
         }
+    },
+
+    getTicketButtons: (Client) => {
+        return new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('CloseTicket')
+                    .setLabel('Fermer l\'écoute')
+                    .setEmoji('⚠')
+                    .setStyle(ButtonStyle.Danger),
+
+                new ButtonBuilder()
+                    .setCustomId('ReportTicket')
+                    .setLabel('Vigilance')
+                    .setEmoji('🔴')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(false),
+
+                new ButtonBuilder()
+                    .setCustomId('AnonyLift')
+                    .setLabel('Levée d\'identifiant')
+                    .setEmoji('🆔')
+                    .setStyle(ButtonStyle.Secondary)
+            )
     },
 
     loadDM: async (Client) => {

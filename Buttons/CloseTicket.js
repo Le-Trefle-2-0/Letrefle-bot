@@ -1,4 +1,4 @@
-const {EmbedBuilder, AttachmentBuilder, ActionRowBuilder, ButtonStyle, ButtonBuilder} = require('discord.js');
+const {EmbedBuilder, AttachmentBuilder, ActionRowBuilder, ButtonStyle, ButtonBuilder, MessageFlags} = require('discord.js');
 const {createWriteStream} = require('fs');
 const moment = require('moment');
 const crypto = require('crypto');
@@ -33,6 +33,8 @@ module.exports = async (Client, interaction) => {
                     ], components: [row]
                 });
 
+                await ticketChannel.setName('🔒・' + ticket.ticketID);
+
                 let user = await Client.users.fetch(ticket.ownerID);
                 if (user) {
                     try {
@@ -52,18 +54,22 @@ module.exports = async (Client, interaction) => {
                         new EmbedBuilder()
                             .setColor('9bd2d2')
                             .setDescription('✅ | L\'écoute a bien été fermée !')
-                ], ephemeral: true});
+                ], flags: [MessageFlags.Ephemeral]});
 
-                const listenTranscript = await transcript.createTranscript(ticketChannel, {
-                    limit: -1,
-                    returnType: 'buffer',
-                    filename: `transcript-${ticketChannel.name}.html`,
-                    saveImages: true,
-                    footerText: 'Transcript confidentiel - Le Trèfle 2.0 - Tout repartage contrevient au règlement intérieur de l\'association.',
-                    poweredBy: false,
-                });
-
-                createWriteStream(`./Transcripts/${ticket.ticketID}.html`).write(listenTranscript);
+                let listenTranscript;
+                try {
+                    listenTranscript = await transcript.createTranscript(ticketChannel, {
+                        limit: -1,
+                        returnType: 'buffer',
+                        filename: `transcript-${ticketChannel.name}.html`,
+                        saveImages: true,
+                        footerText: 'Transcript confidentiel - Le Trèfle 2.0 - Tout repartage contrevient au règlement intérieur de l\'association.',
+                        poweredBy: false,
+                    });
+                    createWriteStream(`./Transcripts/${ticket.ticketID}.html`).write(listenTranscript);
+                } catch (e) {
+                    console.error('Erreur lors de la génération du transcript:', e);
+                }
             }
         }
 

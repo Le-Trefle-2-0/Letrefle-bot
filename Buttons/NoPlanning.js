@@ -19,11 +19,27 @@ module.exports = async (Client, interaction) => {
                 .setDisabled(true)
         )
 
+    let planningRow = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('EditPlanning')
+                .setLabel('Programmer la prochaine permanence')
+                .setStyle(ButtonStyle.Primary)
+                .setEmoji('📝'),
+
+            new ButtonBuilder()
+                .setCustomId('DeletePlanning')
+                .setLabel('Supprimer la programmation')
+                .setStyle(ButtonStyle.Secondary)
+                .setEmoji('🗑️')
+                .setDisabled(true)
+        )
+
     Client.dashboard.message.edit({ embeds: [
             new EmbedBuilder()
                 .setColor('9bd2d2')
                 .setDescription('🔒 | La permanence est actuellement fermée !')
-        ], components: [closedRow], content: null});
+        ], components: [closedRow, planningRow], content: null});
 
     Client.user.setPresence({
         status: 'dnd'

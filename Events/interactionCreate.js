@@ -2,6 +2,12 @@ module.exports = async (Client, interaction) => {
     if (interaction.isButton()) {
         let button = Client.buttons.get(interaction.customId);
 
+        if (!button) {
+            // Handle dynamic IDs (e.g. ApproveSpectator_123456789)
+            const baseId = interaction.customId.split('_')[0];
+            button = Client.buttons.get(baseId);
+        }
+
         if (button) button(Client, interaction);
     }
 

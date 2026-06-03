@@ -1,6 +1,7 @@
 // Importing packages
 const Discord = require('discord.js');
 const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 const fs = require('fs');
 const { duration } = require('moment');
 const Client = new Discord.Client({ intents: [Discord.GatewayIntentBits.Guilds, Discord.GatewayIntentBits.GuildMembers, Discord.GatewayIntentBits.GuildMessages, Discord.GatewayIntentBits.MessageContent, Discord.GatewayIntentBits.GuildMessageTyping, Discord.GatewayIntentBits.GuildMessageReactions, Discord.GatewayIntentBits.GuildVoiceStates, Discord.GatewayIntentBits.DirectMessages, Discord.GatewayIntentBits.DirectMessageTyping, Discord.GatewayIntentBits.DirectMessageReactions], partials: [Discord.Partials.CHANNEL]});
@@ -99,6 +100,7 @@ Client.Ticket = Client.db.define('ticket', {
     channelID: Sequelize.TEXT,
     attributed: Sequelize.TEXT,
     attributedAt: Sequelize.NUMBER,
+    reportMessageID: Sequelize.TEXT,
 });
 
 // Initiating historic ticket DB model
@@ -112,6 +114,7 @@ Client.Historic = Client.db.define('historic', {
     problematic: Sequelize.TEXT,
     observations: Sequelize.TEXT,
     complement: Sequelize.TEXT,
+    categories: Sequelize.TEXT,
 });
 
 // Save reopen timestamp

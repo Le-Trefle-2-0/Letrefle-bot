@@ -41,8 +41,8 @@ module.exports = async (Client, interaction) => {
             value: 'Propos inadaptés'
         },
         {
-            label: 'Multi appelant.e',
-            value: 'Multi appelant.e'
+            label: 'Multi-appelant',
+            value: 'Multi-appelant'
         }
     ];
 
